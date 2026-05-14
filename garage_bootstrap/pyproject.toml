@@ -1,0 +1,20 @@
+[project]
+name = "garage_bootstrap"
+version = "0.1.0"
+description = "Provision credentials and buckets for projects using the Garage Admin API."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "typer>=0.25.1",
+    "garage-admin-sdk@git+https://git.deuxfleurs.fr/garage-sdk/garage-admin-sdk-python"
+]
+
+[project.scripts]
+garage_bootstrap = "garage_bootstrap.main:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true

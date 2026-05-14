@@ -1,0 +1,1 @@
+Provision credentials and buckets for projects using the Garage Admin API.
