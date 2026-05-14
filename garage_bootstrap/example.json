@@ -1,0 +1,41 @@
+{
+  "buckets": [
+    {
+      "name": "my-bucket"
+    } ,
+    {
+      "name": "my-other-bucket",
+      "max_size": 1000000000000,
+      "max_objects": 1000
+    }
+  ],
+  "keys": [
+    {
+      "name": "my-bucket-key",
+      "permissions": [
+        {
+          "bucket_name": "my-bucket",
+          "read": true,
+          "write": true
+        }
+      ],
+      "create_bucket_permission": false
+    },
+    {
+      "name": "my-admin-key",
+      "create_bucket_permission": true,
+      "permissions": [
+        {
+          "bucket_name": "my-bucket",
+          "read": true,
+          "write": true
+        },
+        {
+          "bucket_name": "my-other-bucket",
+          "read": true,
+          "write": true
+        }
+      ]
+    }
+  ]
+}
