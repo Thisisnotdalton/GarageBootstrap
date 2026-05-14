@@ -23,10 +23,16 @@ def get_keys_api() -> garage_admin_sdk.AccessKeyApi:
     return garage_admin_sdk.AccessKeyApi(get_api_client())
 
 
-def get_existing_keys() -> dict[KeyName, KeyID]:
+def get_existing_keys(remove_expired: bool = True) -> dict[KeyName, KeyID]:
     existing_keys = {}
+    expired_key_ids = []
     for key in get_keys_api().list_keys():
+        if remove_expired and key.expired:
+            expired_key_ids.append(key.id)
+            continue
         existing_keys[key.name] = key.id
+    for key_id in expired_key_ids:
+        get_keys_api().delete_key(key_id)
     return existing_keys
 
 
