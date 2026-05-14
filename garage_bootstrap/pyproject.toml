@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "typer>=0.25.1",
-    "garage-admin-sdk@git+https://git.deuxfleurs.fr/garage-sdk/garage-admin-sdk-python"
+    "garage-admin-sdk@git+https://git.deuxfleurs.fr/garage-sdk/garage-admin-sdk-python",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.1",
 ]
 
 [project.scripts]
