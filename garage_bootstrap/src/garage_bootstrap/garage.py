@@ -2,7 +2,7 @@ from functools import lru_cache
 
 import garage_admin_sdk
 from garage_bootstrap.settings import get_settings
-from garage_bootstrap.models import Key, KeyName, KeyID, BucketName, BucketID, Bucket
+from garage_bootstrap.models import Key, KeyName, KeyID, BucketName, BucketID, Bucket, GarageConfiguration
 
 
 def get_configuration() -> garage_admin_sdk.Configuration:
@@ -131,3 +131,8 @@ def create_keys(keys: list[Key]) -> list[KeyName]:
                 permissions_api.deny_bucket_key(
                     garage_admin_sdk.BucketKeyPermChangeRequest.from_dict(denied_permissions_params))
     return key_names
+
+
+def apply_configuration(configuration: GarageConfiguration):
+    create_buckets(configuration.buckets)
+    create_keys(configuration.keys)
