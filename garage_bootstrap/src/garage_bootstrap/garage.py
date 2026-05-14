@@ -55,6 +55,20 @@ def get_existing_buckets() -> dict[BucketName, BucketID]:
     return existing_buckets
 
 
+def create_buckets(buckets: list[BucketName]) -> list[BucketName]:
+    bucket_names = []
+    buckets_api = get_buckets_api()
+    existing_buckets = get_existing_buckets()
+    for bucket_name in buckets:
+        if bucket_name not in existing_buckets:
+            new_bucket_params = {
+                'globalAlias': [bucket_name]
+            }
+            buckets_api.create_bucket(garage_admin_sdk.CreateBucketRequest.from_dict(new_bucket_params))
+            bucket_names.append(bucket_name)
+    return bucket_names
+
+
 def create_keys(keys: list[Key]) -> list[KeyName]:
     key_names = []
     keys_api = get_keys_api()
