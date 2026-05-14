@@ -2,11 +2,13 @@ from typing import Annotated, Optional
 from pydantic import BaseModel, Field
 
 BucketID = Annotated[str, Field(description='Unique identifier of the bucket.')]
+BucketName = Annotated[str, Field(description='Name of the bucket.')]
 KeyID = Annotated[str, Field(description='Unique identifier of the key.')]
 KeyName = Annotated[str, Field(description='Name of the key.')]
 
+
 class KeyPermission(BaseModel):
-    id: BucketID
+    bucket_name: BucketName
     read: bool
     write: bool
 
@@ -19,7 +21,7 @@ class Key(BaseModel):
 
 
 class Bucket(BaseModel):
-    name: Annotated[str, Field(description='Name of the bucket.')]
+    name: BucketName
     max_size: Optional[Annotated[int, Field(description='Maximum size of the bucket in bytes.')]] = None
     max_objects: Optional[Annotated[int, Field(description='Maximum number of objects this bucket may hold.')]] = None
 
