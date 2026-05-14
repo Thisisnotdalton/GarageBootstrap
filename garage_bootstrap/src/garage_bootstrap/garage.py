@@ -2,7 +2,7 @@ from functools import lru_cache
 
 import garage_admin_sdk
 from garage_bootstrap.settings import get_settings
-from garage_bootstrap.models import Key, KeyName, KeyID, BucketName, BucketID
+from garage_bootstrap.models import Key, KeyName, KeyID, BucketName, BucketID, Bucket
 
 
 def get_configuration() -> garage_admin_sdk.Configuration:
@@ -55,17 +55,26 @@ def get_existing_buckets() -> dict[BucketName, BucketID]:
     return existing_buckets
 
 
-def create_buckets(buckets: list[BucketName]) -> list[BucketName]:
+def create_buckets(buckets: list[Bucket]) -> list[BucketName]:
     bucket_names = []
     buckets_api = get_buckets_api()
     existing_buckets = get_existing_buckets()
-    for bucket_name in buckets:
-        if bucket_name not in existing_buckets:
+    for bucket in buckets:
+        if bucket.name not in existing_buckets:
             new_bucket_params = {
-                'globalAlias': [bucket_name]
+                'globalAlias': [bucket.name]
             }
-            buckets_api.create_bucket(garage_admin_sdk.CreateBucketRequest.from_dict(new_bucket_params))
-            bucket_names.append(bucket_name)
+            new_bucket = buckets_api.create_bucket(garage_admin_sdk.CreateBucketRequest.from_dict(new_bucket_params))
+            bucket_names.append(bucket.name)
+            existing_buckets[bucket.name] = new_bucket.id
+        quotas = {
+            'maxBytes': bucket.max_size,
+            'maxObjects': bucket.max_objects,
+        }
+        buckets_api.update_bucket(
+            existing_buckets[bucket.name],
+            garage_admin_sdk.UpdateBucketRequestBody.from_dict(dict(quotas=quotas))
+        )
     return bucket_names
 
 
