@@ -1,37 +1,47 @@
 {
   "buckets": [
     {
-      "name": "my-bucket"
-    } ,
+      "name": "forgejo",
+      "max_size": 4398046511104
+    },
     {
-      "name": "my-other-bucket",
-      "max_size": 1000000000000,
-      "max_objects": 1000
+      "name": "proxmox-backup",
+      "max_size": 4398046511104
+    },
+    {
+      "name": "linux-isos",
+      "max_size": 8796093022208
     }
   ],
   "keys": [
     {
-      "name": "my-bucket-key",
+      "name": "forgejo-key",
+      "create_bucket_permission": false,
       "permissions": [
         {
-          "bucket_name": "my-bucket",
+          "bucket_name": "forgejo",
           "read": true,
           "write": true
         }
-      ],
-      "create_bucket_permission": false
+      ]
     },
     {
-      "name": "my-admin-key",
-      "create_bucket_permission": true,
+      "name": "proxmox-backup-key",
+      "create_bucket_permission": false,
       "permissions": [
         {
-          "bucket_name": "my-bucket",
+          "bucket_name": "proxmox-backup",
           "read": true,
           "write": true
-        },
+        }
+      ]
+    },
+    {
+      "name": "linux-isos-key",
+      "create_bucket_permission": false,
+      "permissions": [
         {
-          "bucket_name": "my-other-bucket",
+          "bucket_name": "linux-isos",
           "read": true,
           "write": true
         }
