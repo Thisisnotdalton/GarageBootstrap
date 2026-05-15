@@ -1,0 +1,12 @@
+services:
+  boostrap_garage:
+    build: .
+    container_name: "garage-bootstrap"
+    volumes:
+      - ./example.json:/etc/config.json:ro
+      - ./output_data:/output_data
+    environment:
+      GARAGE_API_URL: http://localhost:8080
+      GARAGE_API_KEY: s3cret
+      CONFIGURATION_FILE_PATH: /etc/config.json
+      OUTPUT_DIRECTORY: /output_data
