@@ -9,8 +9,8 @@ from garage_bootstrap.models import Key, KeyName, KeyID, KeySecret, BucketName, 
 def get_configuration() -> garage_admin_sdk.Configuration:
     settings = get_settings()
     return garage_admin_sdk.Configuration(
-        host=settings.garage_api_url,
-        access_token=settings.garage_api_key
+        host=settings.api_url,
+        access_token=settings.api_key
     )
 
 
