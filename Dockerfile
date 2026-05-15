@@ -1,7 +1,8 @@
 FROM python:3.12-slim-bullseye
 ENV CONFIGURATION_FILE_PATH="/etc/config.json"
 ENV OUTPUT_DIRECTORY="/etc/config.json"
-
+# Install git
+RUN apt update && apt install git -y
 # Install uv.
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
