@@ -20,6 +20,11 @@ class Key(BaseModel):
         bool, Field(description='Whether the key has permission to create buckets.')] = False
 
 
+class KeySecret(BaseModel):
+    id: KeyID
+    secret: str
+
+
 class Bucket(BaseModel):
     name: BucketName
     max_size: Optional[Annotated[int, Field(description='Maximum size of the bucket in bytes.')]] = None

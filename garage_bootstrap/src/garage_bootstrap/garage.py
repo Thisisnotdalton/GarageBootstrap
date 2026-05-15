@@ -1,8 +1,9 @@
+import os.path
 from functools import lru_cache
 
 import garage_admin_sdk
 from garage_bootstrap.settings import get_settings
-from garage_bootstrap.models import Key, KeyName, KeyID, BucketName, BucketID, Bucket, GarageConfiguration
+from garage_bootstrap.models import Key, KeyName, KeyID, KeySecret, BucketName, BucketID, Bucket, GarageConfiguration
 
 
 def get_configuration() -> garage_admin_sdk.Configuration:
@@ -85,8 +86,8 @@ def create_buckets(buckets: list[Bucket]) -> list[BucketName]:
     return bucket_names
 
 
-def create_keys(keys: list[Key], regenerate: bool = False) -> list[KeyName]:
-    key_names = []
+def create_keys(keys: list[Key], regenerate: bool = False) -> dict[KeyName, KeySecret]:
+    key_secrets = {}
     keys_api = get_keys_api()
     permissions_api = get_permissions_api()
     if regenerate:
@@ -105,7 +106,7 @@ def create_keys(keys: list[Key], regenerate: bool = False) -> list[KeyName]:
             }
             new_key_request_body = garage_admin_sdk.UpdateKeyRequestBody.from_dict(new_key_params)
             new_key = keys_api.create_key(new_key_request_body)
-            key_names.append(new_key.name)
+            key_secrets[key.name] = KeySecret(id=new_key.access_key_id, secret=new_key.secret_access_key)
             key_id = new_key.access_key_id
         listed_bucket_names = {}
         for permission in key.permissions:
@@ -139,9 +140,13 @@ def create_keys(keys: list[Key], regenerate: bool = False) -> list[KeyName]:
                 }
                 permissions_api.deny_bucket_key(
                     garage_admin_sdk.BucketKeyPermChangeRequest.from_dict(denied_permissions_params))
-    return key_names
+    return key_secrets
 
 
-def apply_configuration(configuration: GarageConfiguration):
+def apply_configuration(configuration: GarageConfiguration, output_directory: str = '.'):
     create_buckets(configuration.buckets)
-    create_keys(configuration.keys)
+    generated_key_secrets = create_keys(configuration.keys)
+    os.makedirs(output_directory, exist_ok=True)
+    for key_name, key_secret in generated_key_secrets.items():
+        with open(os.path.join(output_directory, f'{key_name}.json'), 'w') as f:
+            f.write(key_secret.model_dump_json(indent=2, exclude_none=True))
