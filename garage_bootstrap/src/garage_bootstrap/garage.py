@@ -69,10 +69,10 @@ def create_buckets(buckets: list[Bucket]) -> list[BucketName]:
     existing_buckets = get_existing_buckets()
     for bucket in buckets:
         if bucket.name not in existing_buckets:
-            new_bucket_params = {
-                'global_alias': bucket.name
-            }
-            new_bucket = buckets_api.create_bucket(garage_admin_sdk.CreateBucketRequest.from_dict(new_bucket_params))
+            new_bucket_params = garage_admin_sdk.CreateBucketRequest.from_dict({
+                'globalAlias': bucket.name
+            })
+            new_bucket = buckets_api.create_bucket(new_bucket_params)
             bucket_names.append(bucket.name)
             existing_buckets[bucket.name] = new_bucket.id
         quotas = {
