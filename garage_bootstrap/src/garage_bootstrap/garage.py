@@ -46,6 +46,13 @@ def get_existing_keys(remove_expired: bool = True) -> dict[KeyName, KeyID]:
     return existing_keys
 
 
+def delete_keys(key_names: list[KeyName]):
+    keys = get_existing_keys(remove_expired=False)
+    for key_name in key_names:
+        if keys.get(key_name):
+            get_keys_api().delete_key(keys[key_name])
+
+
 def get_existing_buckets() -> dict[BucketName, BucketID]:
     existing_buckets = {}
     for bucket in get_buckets_api().list_buckets():
@@ -78,10 +85,12 @@ def create_buckets(buckets: list[Bucket]) -> list[BucketName]:
     return bucket_names
 
 
-def create_keys(keys: list[Key]) -> list[KeyName]:
+def create_keys(keys: list[Key], regenerate: bool = False) -> list[KeyName]:
     key_names = []
     keys_api = get_keys_api()
     permissions_api = get_permissions_api()
+    if regenerate:
+        delete_keys([key.name for key in keys])
     existing_keys = get_existing_keys()
     existing_buckets = get_existing_buckets()
     for key in keys:
