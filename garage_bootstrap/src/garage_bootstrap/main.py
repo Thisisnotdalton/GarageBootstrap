@@ -6,10 +6,11 @@ app = typer.Typer()
 
 
 @app.command()
-def apply(configuration_file_path: str):
+def apply(configuration_file_path: str, output_directory: str):
     print(f"Applying configuration from {configuration_file_path}")
     with open(configuration_file_path, 'r') as f:
-        apply_configuration(GarageConfiguration.model_validate_json(f.read()))
+        configuration = GarageConfiguration.model_validate_json(f.read())
+    apply_configuration(configuration, output_directory)
 
 
 if __name__ == "__main__":
