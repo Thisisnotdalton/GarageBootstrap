@@ -151,6 +151,6 @@ def apply_configuration(configuration: GarageConfiguration, output_directory: st
         os.makedirs(key_directory, exist_ok=True)
         with open(os.path.join(key_directory, f'{key_name}.json'), 'w') as f:
             f.write(key_secret.model_dump_json(indent=2, exclude_none=True))
-        with open(os.path.join(key_directory, f'{key_name}.env')) as f:
+        with open(os.path.join(key_directory, f'{key_name}.env'), 'w') as f:
             f.write(f'export MINIO_ACCESS_KEY_ID={key_secret.id}\n')
             f.write(f'export MINIO_SECRET_ACCESS_KEY={key_secret.secret}\n')
