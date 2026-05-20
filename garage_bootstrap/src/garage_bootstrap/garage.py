@@ -146,11 +146,14 @@ def create_keys(keys: list[Key], regenerate: bool = False) -> dict[KeyName, KeyS
 def apply_configuration(configuration: GarageConfiguration, output_directory: str = '.'):
     create_buckets(configuration.buckets)
     generated_key_secrets = create_keys(configuration.keys)
-    for key_name, key_secret in generated_key_secrets.items():
+    existing_keys = get_existing_keys()
+    for key in configuration.keys:
+        key_name = key.name
+        print(f'Writing key {key_name} to {output_directory}')
         key_directory = os.path.join(output_directory, key_name)
         os.makedirs(key_directory, exist_ok=True)
-        with open(os.path.join(key_directory, f'{key_name}.json'), 'w') as f:
-            f.write(key_secret.model_dump_json(indent=2, exclude_none=True))
+        key_id = existing_keys.get(key_name)
+        key_secret = generated_key_secrets.get(key_name) or get_keys_api().get_key_info(key_id, show_secret_key=True).secret_access_key
         with open(os.path.join(key_directory, f'{key_name}.env'), 'w') as f:
-            f.write(f'export MINIO_ACCESS_KEY_ID={key_secret.id}\n')
-            f.write(f'export MINIO_SECRET_ACCESS_KEY={key_secret.secret}\n')
+            f.write(f'export MINIO_ACCESS_KEY_ID={key_id}\n')
+            f.write(f'export MINIO_SECRET_ACCESS_KEY={key_secret}\n')
