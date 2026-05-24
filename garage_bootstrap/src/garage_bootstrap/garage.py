@@ -2,6 +2,8 @@ import os.path
 from functools import lru_cache
 
 import garage_admin_sdk
+from garage_admin_sdk.exceptions import ServiceException
+
 from garage_bootstrap.settings import get_settings
 from garage_bootstrap.models import Key, KeyName, KeyID, KeySecret, BucketName, BucketID, Bucket, GarageConfiguration
 
@@ -54,12 +56,21 @@ def delete_keys(key_names: list[KeyName]):
             get_keys_api().delete_key(keys[key_name])
 
 
-def get_existing_buckets() -> dict[BucketName, BucketID]:
+def get_existing_buckets(retry_delay_seconds: float = 1, max_retries: int = 30) -> dict[BucketName, BucketID]:
     existing_buckets = {}
-    for bucket in get_buckets_api().list_buckets():
-        assert len(
-            bucket.global_aliases) == 1, f'Bucket must have exactly one global alias: {bucket.id}: {bucket.global_aliases}'
-        existing_buckets[bucket.global_aliases[0]] = bucket.id
+    for attempt in range(max_retries):
+        try:
+            for bucket in get_buckets_api().list_buckets():
+                assert len(
+                    bucket.global_aliases) == 1, f'Bucket must have exactly one global alias: {bucket.id}: {bucket.global_aliases}'
+                existing_buckets[bucket.global_aliases[0]] = bucket.id
+            break
+        except ServiceException:
+            if attempt == max_retries - 1:
+                raise
+            import time
+            time.sleep(retry_delay_seconds)
+            return get_existing_buckets(retry_delay_seconds * 2, max_retries - 1)
     return existing_buckets
 
 
