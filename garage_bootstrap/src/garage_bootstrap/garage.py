@@ -65,7 +65,7 @@ def get_existing_buckets(retry_delay_seconds: float = 1, max_retries: int = 30) 
                     bucket.global_aliases) == 1, f'Bucket must have exactly one global alias: {bucket.id}: {bucket.global_aliases}'
                 existing_buckets[bucket.global_aliases[0]] = bucket.id
             break
-        except ServiceException:
+        except:
             if attempt == max_retries - 1:
                 raise
             import time
