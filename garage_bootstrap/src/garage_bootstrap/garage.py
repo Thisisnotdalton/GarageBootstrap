@@ -168,3 +168,7 @@ def apply_configuration(configuration: GarageConfiguration, output_directory: st
         with open(os.path.join(key_directory, f'{key_name}.env'), 'w') as f:
             f.write(f'export MINIO_ACCESS_KEY_ID={key_id}\n')
             f.write(f'export MINIO_SECRET_ACCESS_KEY={key_secret}\n')
+        with open(os.path.join(key_directory, f'{key_name}.key'), 'w') as f:
+            f.write(str(key_id))
+        with open(os.path.join(key_directory, f'{key_name}.secret'), 'w') as f:
+            f.write(str(key_secret))
